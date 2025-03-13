@@ -32,13 +32,39 @@ export class UsersController {
 
   @Put()
   async updateUser(
-    @Body() updateData: { id: number; username?: string; password?: string },
+    @Body()
+    updateData: {
+      id: number;
+      username?: string;
+      password?: string;
+      name?: string;
+    },
   ) {
-    return this.userService.updateUser(updateData.id, updateData);
+    try {
+      const updatedUser = await this.userService.updateUser(
+        updateData.id,
+        updateData,
+      );
+
+      if (!updatedUser) {
+        return { success: false, message: 'User ID does not exist.' };
+      }
+
+      return {
+        success: true,
+        message: 'User updated successfully!',
+        user: updatedUser,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || 'An error occurred while updating the user.',
+      };
+    }
   }
 
   @Delete()
-  async deleteUser(@Body() body: { username: string }) {
-    return this.userService.deleteUser(body.username);
+  async deleteUser(@Body() body: { username: string; password: string }) {
+    return this.userService.deleteUser(body.username, body.password);
   }
 }

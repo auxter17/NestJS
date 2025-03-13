@@ -13,11 +13,11 @@ export class UsersService {
     return this.usersrepository.getAllUsers();
   }
 
-  async deleteUser(username: string): Promise<Users | null> {
+  async deleteUser(username: string, password: string): Promise<Users | null> {
     const user = await this.usersrepository.getByUserName(username);
     if (!user) return null;
 
-    await this.usersrepository.deleteByUserName(username);
+    await this.usersrepository.deleteByUserName(username, password);
     return user;
   }
 

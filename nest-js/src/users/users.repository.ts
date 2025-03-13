@@ -12,8 +12,11 @@ export class UsersRepository extends Repository<Users> {
     return this.find();
   }
 
-  async deleteByUserName(username: string): Promise<DeleteResult> {
-    return this.delete({ username });
+  async deleteByUserName(
+    username: string,
+    password: string,
+  ): Promise<DeleteResult> {
+    return this.delete({ username, password });
   }
 
   async getByUserName(username: string): Promise<Users | null> {
@@ -24,6 +27,11 @@ export class UsersRepository extends Repository<Users> {
     id: number,
     updateData: Partial<Users>,
   ): Promise<Users | null> {
+    const user = await this.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User ID does not exist');
+    }
+
     await this.update(id, updateData);
     return this.findOne({ where: { id } });
   }
